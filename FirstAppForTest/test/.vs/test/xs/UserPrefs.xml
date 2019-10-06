@@ -1,0 +1,28 @@
+﻿<Properties StartupConfiguration="{E5C00A68-E6DB-FEA3-938C-F34D364EA738}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Notes.cs">
+    <Files>
+      <File FileName="Assets/Scripts/WS_Client.cs" Line="23" Column="33" />
+      <File FileName="Assets/Scripts/notes.cs" Line="22" Column="31" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="test" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="Scripts" expanded="True">
+                <Node name="Notes.cs" selected="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="ad2fef5c-06ae-4df9-9262-9eaf3417c894" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
