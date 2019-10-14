@@ -25,11 +25,7 @@ public class FootNotes : Token{
 
     
     void Update(){
-        if(Y < min.y){//ノーツが下端に達したら
-            destroy();//ノーツ破壊
-            int index = (int)(X * 1024.0 / 128.0 / (max.x - min.x) + 2.5);//X座標からノーツのレーン計算
-            WS_Client.removeFootListAt(Math.Max(index-1,0));//noteslistの調整
-        }
+
     }
 
     public void setLength(float length){

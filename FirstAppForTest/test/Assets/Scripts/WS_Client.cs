@@ -52,9 +52,6 @@ public class WS_Client : Token
 
             string[] arr = e.Data.Split(':');//受け取ったデータの整理
             string code = arr[0];
-            // string message = arr[1];
-            // string submessage = arr[2];//良くなさそう
-            // string subsubmessage = arr[3];//良くない
 
             if(code == "generate"){ //ノーツ生成
                 int lane = int.Parse(arr[1]); //ノーツのレーン
@@ -70,6 +67,7 @@ public class WS_Client : Token
                         footnoteslist[lane-1].Add(footNotes);
                         footNotes.setLength(length);
                     }, null);
+                    
                 }
 
             }else if(code == "remove"){ //ノーツ削除
@@ -90,6 +88,27 @@ public class WS_Client : Token
                     
                 },null); //ここまでメインスレッド------------
                 combo.textAnimation();
+                
+            }else if(code == "removeFoot"){
+
+                int lane = int.Parse(arr[1]) - 1; //ノーツのレーン
+                string judgeText = arr[2];
+                string comboText = arr[3];
+                string scoreText = arr[4];
+                context.Post(__ => {//ここからメインスレッド---
+                    if(footnoteslist[lane].Count > 0){
+                        float y = footnoteslist[lane][0].Y;
+                        footnoteslist[lane][0].destroy(); //ノーツオブジェクトの破壊
+                        footnoteslist[lane].RemoveAt(0); //配列内のノーツ削除
+                        Judge judge = Judge.Add(0.026f*(-75 + lane * 50),y);
+                        judge.setText(judgeText);
+                        combo.setText(comboText);
+                        score.setText(scoreText);
+                    }
+                    
+                },null); //ここまでメインスレッド------------
+                combo.textAnimation();
+
             }else if(code == "reset"){//ノーツ配列リセット
             
                 noteslist[0].Clear();
