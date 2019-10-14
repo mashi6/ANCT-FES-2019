@@ -24,15 +24,6 @@ public class WS_Client : Token
         footLeft = FootLeft.GetComponentInChildren<Foot>();
         footRight = FootRight.GetComponentInChildren<Foot>();
 
-        // GameObject comboObj = GameObject.Find("Combo");
-        // combo = comboObj.GetComponents<Combo>()[0];
-        
-        // GameObject _parent = comboObj.transform.root.gameObject;
-        // Debug.Log ("Parent:" + _parent.name);
-        // canvasMgr.GetComponents<CanvasMgr>()[0].addScore(0,0);
-        
-        // combo.changeText("comboo");
-
         var context = SynchronizationContext.Current;//メインスレッド呼ぶ時に使うやつ
         noteslist = new List<List<Notes>>();//初期化
         noteslist.Add(new List<Notes>());
@@ -106,12 +97,11 @@ public class WS_Client : Token
                 noteslist[2].Clear();
                 noteslist[3].Clear();
                 footnoteslist[0].Clear();
-                footnoteslist[0].Clear();
-                footnoteslist[0].Clear();
-                footnoteslist[0].Clear();
+                footnoteslist[1].Clear();
+                footnoteslist[2].Clear();
+                footnoteslist[3].Clear();
 
             }else if(code == "move"){
-                // Debug.Log(footLeft.name);
                 float left = float.Parse(arr[1]) - 5.0f;//0~2
                 float right = float.Parse(arr[2]) - 5.0f;//3~5
                 context.Post(__ => {
@@ -124,12 +114,7 @@ public class WS_Client : Token
                 string judgeText = arr[2];
                 string comboText = arr[3];
                 string scoreText = arr[4];
-                
-                // float y = -0.026f * 260.0f;
-
                 context.Post(__ => {
-                    // float y = footnoteslist[lane][0].getY();
-                    
                     float y = footLeft.Y;
                     Judge judge = Judge.Add(0.026f*(-75 + lane * 50),y);
                     judge.setText(judgeText);
