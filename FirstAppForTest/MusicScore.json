@@ -1,167 +1,154 @@
 {
 	"Notes":[
 		{
-			"NotesNumber":1,
 			"NotesType":"Circle",
 			"Timing":100,
 			"Lane":1
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":500,
 			"Lane":4
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":700,
 			"Lane":1
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":1000,
 			"Lane":2
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":1300,
 			"Lane":3
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":1700,
 			"Lane":4
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":2000,
 			"Lane":1
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":2500,
 			"Lane":2
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":3000,
 			"Lane":4
 		},{
-			"NotesNumber":2,
+			"NotesType":"Rectangle",
+			"Timing":3000,
+			"Lane":2,
+			"Length":1000
+		},{
 			"NotesType":"Circle",
 			"Timing":3400,
 			"Lane":4
 		},{
-			"NotesNumber":2,
+			"NotesType":"Rectangle",
+			"Timing":3500,
+			"Lane":4,
+			"Length":1000
+		},{
 			"NotesType":"Circle",
 			"Timing":3700,
 			"Lane":3
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":4000,
 			"Lane":4
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":4500,
 			"Lane":1
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":5000,
 			"Lane":2
 		},{
-			"NotesNumber":2,
+			"NotesType":"Rectangle",
+			"Timing":5000,
+			"Lane":1,
+			"Length":1000
+		},{
 			"NotesType":"Circle",
 			"Timing":5500,
 			"Lane":2
 		},{
-			"NotesNumber":2,
+			"NotesType":"Rectangle",
+			"Timing":5000,
+			"Lane":3,
+			"Length":1000
+		},{
 			"NotesType":"Circle",
 			"Timing":6000,
 			"Lane":1
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":6400,
 			"Lane":2
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":6800,
 			"Lane":3
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":7200,
 			"Lane":4
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":7600,
 			"Lane":3
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":8000,
 			"Lane":2
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":8400,
 			"Lane":3
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":8800,
 			"Lane":1
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":9200,
 			"Lane":1
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":9500,
 			"Lane":1
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":9700,
 			"Lane":1
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":10000,
 			"Lane":2
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":10400,
 			"Lane":4
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":10700,
 			"Lane":3
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":11000,
 			"Lane":2
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":11200,
 			"Lane":2
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":12000,
 			"Lane":4
 		},{
-			"NotesNumber":2,
 			"NotesType":"Circle",
 			"Timing":12400,
 			"Lane":1
