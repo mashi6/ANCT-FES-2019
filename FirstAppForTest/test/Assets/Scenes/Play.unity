@@ -610,8 +610,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   combo: {fileID: 1803202133}
   score: {fileID: 1694581672}
-  FootLeft: {fileID: 821806462}
-  FootRight: {fileID: 6992224}
+  footLeftObj: {fileID: 821806462}
+  footRightObj: {fileID: 6992224}
 --- !u!4 &1067072943
 Transform:
   m_ObjectHideFlags: 0
@@ -777,7 +777,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d7726de8159848578f35f4f56793596, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: {fileID: 1694581674}
+  text: {fileID: 0}
 --- !u!212 &1694581673
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -917,7 +917,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b164a637215e44a4da493f98143093e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: {fileID: 1803202134}
+  text: {fileID: 0}
 --- !u!114 &1803202134
 MonoBehaviour:
   m_ObjectHideFlags: 0
