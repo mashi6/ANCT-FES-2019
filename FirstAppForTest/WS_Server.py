@@ -165,8 +165,10 @@ def judgeNotes():
 		length = notes.length
 		timing = notes.timing
 
-		if elapseTime >= timing+2100+length :
+		if elapseTime >= timing+2100+length:
 			FootNotesList[lane-1].pop(0)
+			Combo = 0
+			send_msg(['removeFoot',str(lane),'bad',str(Combo),str(Score)]);
 
 		elif elapseTime >= timing+2100:
 			if  lane == FootLeft-5 or lane == FootRight-5:
