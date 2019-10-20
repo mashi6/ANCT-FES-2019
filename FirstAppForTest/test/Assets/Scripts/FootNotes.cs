@@ -4,37 +4,34 @@ using UnityEngine;
 using System;
 
 public class FootNotes : Token{
-
     static GameObject _prefab = null;
-    Vector2 min;
-    Vector2 max;
+    private NotesType type;
     private float length;
-    public static FootNotes Add(float x,float y){
-        _prefab = GetPrefab(_prefab, "FootNotes");
+    private int id;
+
+    public static FootNotes Add(float x,float y,string type){
+        _prefab = GetPrefab(_prefab, type);
         return CreateInstance2<FootNotes>(_prefab, x, y);
     }
 
-    void Start(){
-        min = GetWorldMin();//画面左下座標取得
-        max = GetWorldMax();//画面右上座標取得
-        
-        float dir = 270;//運動方向
-        float spd = 3;//運動速度
-        SetVelocity(dir, spd);//運動開始
+    public void setSpeed(float speed){
+        SetVelocity(270, speed);
     }
-
-    
-    void Update(){
-
+    public void setId(int id){
+        this.id = id;
     }
-
+    public void setType(NotesType type){
+        this.type = type;
+    }
     public void setLength(float length){
         this.length = length;
         ScaleY = 0.5528f * length / 1300.0f;
     }
 
-    public float getY(){
-        return this.Y;
+    void Start(){
+    }
+    
+    void Update(){
     }
 
     public void destroy(){//無いとエラー吐く
