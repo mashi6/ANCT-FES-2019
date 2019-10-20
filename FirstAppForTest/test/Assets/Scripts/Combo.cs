@@ -15,7 +15,7 @@ public class Combo : Token
     public void setText(string text){
         this.text.text = text;
         this.text.fontSize = Math.Min(this.text.fontSize + 10,70);
-        
+        // textAnimation();
     }
     public IEnumerator textAnimation(){
         // Debug.Log(ScaleX);

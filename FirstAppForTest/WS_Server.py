@@ -5,7 +5,8 @@ import time
 import threading
 import random
 import Notes
-import FootNotes
+# import FootNotes
+from time import sleep
 
 
 # Enter押さずに即時入力できるようにするやつ
@@ -28,26 +29,28 @@ except ImportError:
 Score = 0
 Combo = 0
 StartTime = 0.0
-FootLeft = 6
-FootRight = 9
+FootLeft = 6.0
+FootRight = 9.0
 notesJson = []
 NotesList = []
 FootNotesList = []
+Id = 0
 
 # クライアント接続された時に呼び出されるやつ
 def new_client(client,server):
-	server.send_message_to_all("A new client has joined us")
+	# server.send_message_to_all("A new client has joined us")
 	print('New client connected')
 
 # データ受け取った時に呼び出されるやつ
 def received_message(client,server,message):
 	print('received')
 
-# ノーツ情報を送信を事前にスケジュールする
+
+
 def scheduling():
-	scheduler = sched.scheduler(time.time, time.sleep)
+	global Id
 	for note in notesJson:
-		timing = note["Timing"] #そのノーツが表示される、音楽開始からの時間(ms)
+		time = note["Timing"] #そのノーツが表示される、音楽開始からの時間(ms)
 		lane = note["Lane"] #そのノーツが表示されるレーン
 		notesType = note["NotesType"] #丸ノーツか足ノーツか田舎
 		length = '0'
@@ -55,35 +58,30 @@ def scheduling():
 			length = note["Length"] #足ノーツの長さ
 		except:
 			pass
-		notes = Notes.Notes(notesType=notesType,lane=int(lane),length=float(length),timing=float(timing))
-		scheduler.enter(float(timing)*0.001, 1, generate,([notes]))
-		# scheduler.enter(timing*0.001, 1, send_msg, ([['generate',str(lane),notesType,str(length),str(timing)]])) #スケジュールを登録
-	scheduler.run()
+		speed = 0.8+random.random()
+		notes = Notes.Notes(notesType=notesType,lane=int(lane)-1,length=float(length),time=float(time),id=Id,speed=speed)
+		Id += 1
+		generate(notes)
+		sleep(0.1)
 
 def generate(notes):
+	dic = {}
 	if notes.notesType == 'Circle':
 		lane = int(notes.lane)
-		NotesList[lane-1].append(notes)
+		NotesList[lane].append(notes)
+		dic = notes.makeDic({'command':'new'})
 
 	elif notes.notesType == 'Rectangle':
 		lane = int(notes.lane)
-		FootNotesList[lane-1].append(notes)
-	send_msg(['generate',notes.makeMessage()])
+		FootNotesList[lane].append(notes)
+		dic = notes.makeDic({'command':'newFoot'})
+	
+	send_msg(json.dumps(dic));
 
 
 # WebSocketでデータ送信するやつ
-def send_msg(messageList):
-	# global FootNotesList
-	server.send_message_to_all(':'.join(messageList))
-	# arr = messageList
-	# if arr[0] == 'generate':
-	# 	if arr[2] == 'Rectangle':
-	# 		lane = int(arr[1])
-	# 		length = float(arr[3])
-	# 		timing = float(arr[4])
-	# 		FootNotesList[lane-1].append(Notes.Notes('Rectangle',lane,length,timing))
-
-	# print('WebSocket Send Message: '+code+':'+message)
+def send_msg(message):
+	server.send_message_to_all(message)
 
 # WSサーバ起動
 def server_run(server):
@@ -104,15 +102,32 @@ def input_char():
 		if char == 's':# 'start'の's'
 			Combo = 0
 			Score = 0
-			send_msg(['reset'])# クライアントが持っているノーツ情報の初期化
+			StartTime = time.time()
+			print(StartTime)
+			dic = {'command':'start','time':int(StartTime*1000)}
+			send_msg(json.dumps(dic))
+			# send_msg(['reset'])# クライアントが持っているノーツ情報の初期化
 			thread = threading.Thread(target=scheduling)# サブスレッドでスケジュール
 			thread.start()
-			StartTime = time.time()
+		
+		elif char == 'e':
+			dic = {'command':'end'}
+			send_msg(json.dumps(dic))
+			Score = 0
+			Combo = 0
+			StartTime = 0.0
+			FootLeft = 6.0
+			FootRight = 9.0
+			notesJson = []
+			NotesList = []
+			FootNotesList = []
+			Id = 0
 
 		elif char >= '1' and char <= '4':# charはレーン番号を保持する文字列型
 			judge(char)
 
 		elif (char >= '5' and char <= '9') or char == '0':
+			# pass
 			moveFoot(char)
 
 		
@@ -127,8 +142,10 @@ def judge(char):
 		Combo += 1
 		Score += 50*random.choice(range(10,20))
 	if len(NotesList[int(char) - 1]) > 0:
-		NotesList[int(char) - 1].pop(0)
-		send_msg(['remove',char,rdmjudge,str(Combo),str(Score)]);
+		notes = NotesList[int(char) - 1].pop(0)
+		dic = {'command':'judge','judge':rdmjudge,'combo':Combo,'score':Score,'id':notes.Id,'delete':True}
+		# send_msg(['remove',char,rdmjudge,str(Combo),str(Score)]);
+		send_msg(json.dumps(dic))
 	#簡易版なので判定無しにすぐノーツ削除 char番目のレーンにある一番近いノーツを削除
 
 def moveFoot(char):
@@ -136,12 +153,13 @@ def moveFoot(char):
 		char = '10'
 	global FootLeft,FootRight
 
-
 	if char >= '8' or char == '10':
-		FootRight = int(char)
+		FootRight = float(char)
 	elif char <= '7':
-		FootLeft = int(char)
-	send_msg(['move',str(FootLeft),str(FootRight)])
+		FootLeft = float(char)
+	dic = {"command":"foot","positionLeft":FootLeft,"positionRight":FootRight};
+	send_msg(json.dumps(dic));
+	# send_msg(['move',str(FootLeft),str(FootRight)])
 
 # def scheduleJudgeFoot():
 # 	schedule.every(0.5).seconds.do(judgeFoot)
@@ -163,21 +181,32 @@ def judgeNotes():
 	for notes in arr:
 		lane = notes.lane
 		length = notes.length
-		timing = notes.timing
+		timing = notes.time
+		id = notes.Id
 
-		if elapseTime >= timing+2100+length:
-			FootNotesList[lane-1].pop(0)
+#横 10.3
+#縦 7.8
+#判定ライン -1.95
+#ノーツ幅=レーン幅 1.2875
+		if elapseTime >= timing+length/2:
+			FootNotesList[lane].pop(0)
 			Combo = 0
-			send_msg(['removeFoot',str(lane),'bad',str(Combo),str(Score)]);
+			dic = {'command':'judge','type':'Rectangle','lane':lane,'judge':'bad','combo':Combo,'score':Score,'id':id,'delete':True}
+			# send_msg(['removeFoot',str(lane),'bad',str(Combo),str(Score)]);
+			send_msg(json.dumps(dic))
 
-		elif elapseTime >= timing+2100:
+		elif elapseTime >= timing-length/2:
 			if  lane == FootLeft-5 or lane == FootRight-5:
 				Combo += 1
 				Score += 50*random.choice(range(10,20))
-				send_msg(['judgeFoot',str(lane),'good',str(Combo),str(Score)])
+				dic = {'command':'judge','type':'Rectangle','judge':'good','combo':Combo,'score':Score,'id':id,'delete':False}
+				# send_msg(['judgeFoot',str(lane),'good',str(Combo),str(Score)])
+				send_msg(json.dumps(dic))
 			else:
 				Combo = 0
-				send_msg(['judgeFoot',str(lane),'bad',str(Combo),str(Score)])
+				dic = {'command':'judge','type':'Rectangle','judge':'bad','combo':Combo,'score':Score,'id':id,'delete':False}
+				# send_msg(['judgeFoot',str(lane),'bad',str(Combo),str(Score)])
+				send_msg(json.dumps(dic))
 	
 	arr = []
 	if len(NotesList[0]) > 0:
@@ -190,11 +219,14 @@ def judgeNotes():
 		arr.append(NotesList[3][0])
 	for notes in arr:
 		lane = notes.lane
-		timing = notes.timing
-		if elapseTime >= timing+2100:
-			NotesList[lane-1].pop(0)
+		timing = notes.time
+		if elapseTime >= timing+500:
+			NotesList[lane].pop(0)
 			Combo = 0
-			send_msg(['remove',str(lane),'bad',str(Combo),str(Score)]);
+			id = notes.Id
+			dic = {'command':'judge','type':'Circle','judge':'bad','combo':Combo,'score':Score,'id':id,'delete':True}
+			# send_msg(['remove',str(lane),'bad',str(Combo),str(Score)]);
+			send_msg(json.dumps(dic))
 			
 
 	threading.Timer(0.2, judgeNotes).start()
@@ -227,5 +259,4 @@ if __name__ == "__main__":
 	thread_1.start()
 	thread_2.start()
 	thread_3.start()
-
 

@@ -30,7 +30,6 @@ public class Judge : Token
         }
         // 消滅
         DestroyObj();
-
     }
 
     public static Judge Add(float x,float y){

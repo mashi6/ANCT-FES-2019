@@ -14,7 +14,7 @@ public class Score : Token
     public void setText(string text){
         this.text.text = text;
         this.text.fontSize += 10;
-        
+        // textAnimation();
     }
     public IEnumerator textAnimation(){
         // Debug.Log(ScaleX);

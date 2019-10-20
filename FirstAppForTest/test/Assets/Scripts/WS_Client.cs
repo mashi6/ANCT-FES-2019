@@ -10,202 +10,102 @@ using WebSocketSharp.Net;
 
 public class WS_Client : Token
 {
-    
-    WebSocket ws;
-    public Combo combo;
-    public Score score;
-    public GameObject footLeftObj;
-    private Foot footLeft;
-    public GameObject footRightObj;
-    private Foot footRight;
-    
-    static List<List<Notes>> notesList;//各レーンごとのノーツ情報を格納する二次元配列
-    static List<List<FootNotes>> footNotesList;
-
-    private SynchronizationContext context;
-
-    private Vector2 min,max;
+    WebSocket ws_notes;
+    WebSocket ws_foot;
     void Start(){
-        footLeft = footLeftObj.GetComponentInChildren<Foot>();
-        footRight = footRightObj.GetComponentInChildren<Foot>();
 
-        context = SynchronizationContext.Current;//メインスレッド呼ぶ時に使うやつ
-        
-        notesList = new List<List<Notes>>();//初期化
-        notesList.Add(new List<Notes>());
-        notesList.Add(new List<Notes>());
-        notesList.Add(new List<Notes>());
-        notesList.Add(new List<Notes>());
+        ws_notes = new WebSocket("ws://127.0.0.1:3000/notes");//初期化
 
-        footNotesList = new List<List<FootNotes>>();
-        footNotesList.Add(new List<FootNotes>());
-        footNotesList.Add(new List<FootNotes>());
-        footNotesList.Add(new List<FootNotes>());
-        footNotesList.Add(new List<FootNotes>());
-        
-        min = GetWorldMin();//画面左下座標取得
-        max = GetWorldMax();//画面右上座標取得
-
-        ws = new WebSocket("ws://127.0.0.1:3000/");//初期化
-
-        ws.OnOpen += (sender, e) => {//接続確立した時に呼び出される        
-            Debug.Log("WebSocket Open");
+        ws_notes.OnOpen += (sender, e) => {//接続確立した時に呼び出される        
+            Debug.Log("ws_notes open");
         };
-        ws.OnMessage += (sender, e) => {//データ受け取った時に呼び出される
-            Debug.Log("WebSocket Receive Message: " + e.Data);
+        ws_notes.OnMessage += (sender, e) => {//データ受け取った時に呼び出される
+            Debug.Log("ws_notes receive message: " + e.Data);
 
-            string[] arr = e.Data.Split(':');//受け取ったデータの整理
-            string code = arr[0];
-            switch(code){
-                case "generate":
-                generate(arr);
-                    break;
-                case "remove":
-                    remove(arr);
-                    break;
-                case "removeFoot":
-                    removeFoot(arr);
-                    break;
-                case "reset":
-                    reset();
-                    break;
-                case "move":
-                    move(arr);
-                    break;
-                case "judgeFoot":
-                    judgeFoot(arr);
-                    break;
-            }
+            PlayMgr.context.Post(__ =>{
+                Json json = JsonUtility.FromJson<Json>(e.Data);
+                switch(json.command){
+                    case "newFoot":
+                        NotesMgr.Schedule("Rectangle",json);        
+                        break;
+                    case "new":
+                        NotesMgr.Schedule("Circle",json);
+                        break;
+                    case "judge":
+                        TextMgr.Show(json);
+                        if(json.delete){
+                            NotesMgr.Remove(json);
+                        }
+                        break;
+                    case "start":
+                        PlayMgr.setStart(json.time);
+                        break;
+                    case "end":
+                        PlayMgr.clear();
+                        break;
+                    default:
+                        break;
+                }
+            },null);
         };
-        ws.OnError += (sender, e) => {//エラー発生で呼び出される
-            Debug.Log("WebSocket Error Message: " + e.Message);
+        ws_notes.OnError += (sender, e) => {//エラー発生で呼び出される
+            Debug.Log("ws_notes error message: " + e.Message);
         };
-        ws.OnClose += (sender, e) => {//コネクション切断で呼び出される
-            Debug.Log("WebSocket Close");
-            reset();
-            reConnect();
+        ws_notes.OnClose += (sender, e) => {//コネクション切断で呼び出される
+            Debug.Log("ws_notes close");
+            // reset();
+            reConnect_notes();
         };
-        ws.Connect(); //WS開始
+        ws_notes.Connect(); //WS開始
+
+
+
+        ws_foot = new WebSocket("ws://127.0.0.1:3000/foot");
+        ws_foot.OnOpen += (sender, e) => {//接続確立した時に呼び出される        
+            Debug.Log("ws_foot open");
+        };
+        ws_notes.OnMessage += (sender, e) => {//データ受け取った時に呼び出される
+            Debug.Log("ws_foot receive message: " + e.Data);
+            PlayMgr.context.Post(__ =>{
+                Json json = JsonUtility.FromJson<Json>(e.Data);
+                switch(json.command){
+                    case "foot":
+                        FootMgr.Move(json);
+                        break;
+                    case "end":
+                        break;
+                    default:
+                        break;
+                }
+            },null);
+        };
+        ws_foot.OnError += (sender, e) => {//エラー発生で呼び出される
+            Debug.Log("ws_foot error message: " + e.Message);
+        };
+        ws_foot.OnClose += (sender, e) => {//コネクション切断で呼び出される
+            Debug.Log("ws_foot close");
+            reConnect_foot();
+        };
+        ws_foot.Connect();
     }
-    async void reConnect(){
+    
+    async void reConnect_notes(){
         await Task.Delay(3000);
-        ws.Connect();
+        ws_notes.Connect();
+    }
+    async void reConnect_foot(){
+        await Task.Delay(3000);
+        ws_foot.Connect();
     }
 
-    public void generate(string[] arr){
-        int lane = int.Parse(arr[1]);
-        string notesType = arr[2];
-        if(notesType == "Circle"){ //丸ノーツ
-            context.Post(__ => {
-                notesList[lane-1].Add(Notes.Add((float)(128 * (lane - 2 - 0.5) * (max.x - min.x) / 1024.0), (float)((max.y - min.y) / 2.0))); //座標計算してノーツ生成、配列に格納
-            }, null);
-        }else if(notesType == "Rectangle"){ //足ノーツ
-            float length = float.Parse(arr[3]);
-            context.Post(__ => {
-                FootNotes footNotes = FootNotes.Add((float)(128 * (lane - 2 - 0.5) * (max.x - min.x) / 1024.0), (float)((max.y - min.y) / 2.0));
-                footNotesList[lane-1].Add(footNotes);
-                footNotes.setLength(length);
-            }, null);
-        }
-    }
-    public void remove(string[] arr){
-        int lane = int.Parse(arr[1]) - 1; //ノーツのレーン
-        string judgeText = arr[2];
-        string comboText = arr[3];
-        string scoreText = arr[4];
-        context.Post(__ => {//ここからメインスレッド---
-            if(notesList[lane].Count > 0){
-                float y = notesList[lane][0].Y;
-                notesList[lane][0].destroy(); //ノーツオブジェクトの破壊
-                notesList[lane].RemoveAt(0); //配列内のノーツ削除
-                Judge judge = Judge.Add(0.026f*(-75 + lane * 50),y);
-                judge.setText(judgeText);
-                combo.setText(comboText);
-                score.setText(scoreText);
-            }
-        },null); //ここまでメインスレッド------------
-        combo.textAnimation();
-    }
-    public void removeFoot(string[] arr){
-        int lane = int.Parse(arr[1]) - 1; //ノーツのレーン
-        string judgeText = arr[2];
-        string comboText = arr[3];
-        string scoreText = arr[4];
-        context.Post(__ => {//ここからメインスレッド---
-            if(footNotesList[lane].Count > 0){
-                float y = footNotesList[lane][0].Y;
-                footNotesList[lane][0].destroy(); //ノーツオブジェクトの破壊
-                footNotesList[lane].RemoveAt(0); //配列内のノーツ削除
-                Judge judge = Judge.Add(0.026f*(-75 + lane * 50),y);
-                judge.setText(judgeText);
-                combo.setText(comboText);
-                score.setText(scoreText);
-            }
-            
-        },null); //ここまでメインスレッド------------
-        combo.textAnimation();
-    }
-    public void move(string[] arr){
-        float left = float.Parse(arr[1]) - 5.0f;//0~2
-        float right = float.Parse(arr[2]) - 5.0f;//3~5
-        context.Post(__ => {
-            footLeft.setX(128.0f * (left  - 2.0f - 0.5f) * (max.x - min.x) / 1024.0f);
-            footRight.setX(128.0f * (right  - 2.0f - 0.5f) * (max.x - min.x) / 1024.0f);
-        },null);
-    }
-    public void judgeFoot(string[] arr){
-        int lane = int.Parse(arr[1]) - 1;
-        string judgeText = arr[2];
-        string comboText = arr[3];
-        string scoreText = arr[4];
-        context.Post(__ => {
-            float y = footLeft.Y;
-            Judge judge = Judge.Add(0.026f*(-75 + lane * 50),y);
-            judge.setText(judgeText);
-            combo.setText(comboText);
-            score.setText(scoreText);
-        },null);
-    }
-    public void reset(){
-        context.Post(__ => {
-            foreach (List<Notes> notes in notesList){
-                foreach(Notes note in notes){
-                    note.destroy();
-                }
-            }
-            foreach (List<FootNotes> notes in footNotesList){
-                foreach(FootNotes note in notes){
-                    note.destroy();
-                }
-            }
-            notesList[0].Clear();
-            notesList[1].Clear();
-            notesList[2].Clear();
-            notesList[3].Clear();
-            footNotesList[0].Clear();
-            footNotesList[1].Clear();
-            footNotesList[2].Clear();
-            footNotesList[3].Clear();
-        
-            combo.setText("0");
-            score.setText("0");
-        },null);
-    }
-
-    // Update is called once per frame
     void Update(){
 
     }
-    
-    public static void removeListAt(int index){ //ノーツ配列の index番目のレーンから１つ削除
-        notesList[index].RemoveAt(0);
-    }
-    public static void removeFootListAt(int index){
-        footNotesList[index].RemoveAt(0);
-    }
    
     void OnDestroy(){
-        ws.Close();
-        ws = null;
+        ws_notes.Close();
+        ws_foot.Close();
+        ws_notes = null;
+        ws_foot = null;
     }
 }

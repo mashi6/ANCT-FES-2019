@@ -2,38 +2,6 @@
 	"Notes":[
 		{
 			"NotesType":"Circle",
-			"Timing":100,
-			"Lane":1
-		},{
-			"NotesType":"Circle",
-			"Timing":500,
-			"Lane":4
-		},{
-			"NotesType":"Circle",
-			"Timing":700,
-			"Lane":1
-		},{
-			"NotesType":"Circle",
-			"Timing":1000,
-			"Lane":2
-		},{
-			"NotesType":"Circle",
-			"Timing":1300,
-			"Lane":3
-		},{
-			"NotesType":"Circle",
-			"Timing":1700,
-			"Lane":4
-		},{
-			"NotesType":"Circle",
-			"Timing":2000,
-			"Lane":1
-		},{
-			"NotesType":"Circle",
-			"Timing":2500,
-			"Lane":2
-		},{
-			"NotesType":"Circle",
 			"Timing":3000,
 			"Lane":4
 		},{

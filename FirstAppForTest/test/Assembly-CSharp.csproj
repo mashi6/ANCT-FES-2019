@@ -45,13 +45,19 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>     <Compile Include="Assets\Scripts\Combo.cs" />
+     <Compile Include="Assets\Scripts\Enum.cs" />
      <Compile Include="Assets\Scripts\Foot.cs" />
+     <Compile Include="Assets\Scripts\FootMgr.cs" />
      <Compile Include="Assets\Scripts\FootNotes.cs" />
+     <Compile Include="Assets\Scripts\Json.cs" />
      <Compile Include="Assets\Scripts\Judge.cs" />
      <Compile Include="Assets\Scripts\Notes.cs" />
+     <Compile Include="Assets\Scripts\NotesMgr.cs" />
+     <Compile Include="Assets\Scripts\NotesPlan.cs" />
+     <Compile Include="Assets\Scripts\PlayMgr.cs" />
+     <Compile Include="Assets\Scripts\QueueBundle.cs" />
      <Compile Include="Assets\Scripts\Score.cs" />
-     <Compile Include="Assets\Scripts\SelectMgr.cs" />
-     <Compile Include="Assets\Scripts\TitleMgr.cs" />
+     <Compile Include="Assets\Scripts\TextMgr.cs" />
      <Compile Include="Assets\Scripts\Token.cs" />
      <Compile Include="Assets\Scripts\Util.cs" />
      <Compile Include="Assets\Scripts\WS_Client.cs" />
